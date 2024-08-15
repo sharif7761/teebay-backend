@@ -1,6 +1,8 @@
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 const productService = require('../services/productService');
 const { authenticate } = require('../utils/auth');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const productResolvers = {
     Query: {
@@ -10,22 +12,24 @@ const productResolvers = {
         // },
 
         //new
-        userProducts: async (_, __, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
+        userProducts: async (_, __, context) => {
+            const user = authenticate(context);
             return prisma.product.findMany({
-                where: { creatorId: user.id },
+                where: { creatorId: user.userId },
             });
         },
 
-        allProducts: async () => {
+        allProducts: async (_, __, context) => {
+            const user = authenticate(context);
+            if (!user) throw new AuthenticationError('You must be logged in.');
             return prisma.product.findMany();
         },
 
-        boughtProducts: async (_, __, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
+        boughtProducts: async (_, __, context) => {
+            const user = authenticate(context);
             return prisma.productTransaction.findMany({
                 where: {
-                    userId: user.id,
+                    userId: user.userId,
                     transactionType: 'PURCHASE',
                 },
                 include: {
@@ -34,11 +38,11 @@ const productResolvers = {
             });
         },
 
-        soldProducts: async (_, __, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
+        soldProducts: async (_, __, context) => {
+            const user = authenticate(context);
             return prisma.product.findMany({
                 where: {
-                    creatorId: user.id,
+                    creatorId: user.userId,
                     transactions: {
                         some: {
                             transactionType: 'PURCHASE',
@@ -51,11 +55,11 @@ const productResolvers = {
             });
         },
 
-        rentProducts: async (_, __, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
+        rentProducts: async (_, __, context) => {
+            const user = authenticate(context);
             return prisma.productTransaction.findMany({
                 where: {
-                    userId: user.id,
+                    userId: user.userId,
                     transactionType: 'RENT',
                 },
                 include: {
@@ -64,11 +68,11 @@ const productResolvers = {
             });
         },
 
-        lentProducts: async (_, __, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
+        lentProducts: async (_, __, context) => {
+            const user = authenticate(context);
             return prisma.product.findMany({
                 where: {
-                    creatorId: user.id,
+                    creatorId: user.userId,
                     transactions: {
                         some: {
                             transactionType: 'RENT',
@@ -102,33 +106,31 @@ const productResolvers = {
             }
             return true;
         },
-        buyProduct: async (_, { productId }, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
-            const product = await prisma.product.findUnique({ where: { id: productId } });
+        buyProduct: async (parent, { productId }, context) => {
+            const user = authenticate(context);
+            const product = await prisma.product.findUnique({ where: { id: Number(productId) } });
             if (!product) throw new Error('Product not found');
 
             return prisma.productTransaction.create({
                 data: {
-                    productId,
-                    userId: user.id,
+                    productId: Number(productId),
+                    userId: user.userId,
                     transactionType: 'PURCHASE',
-                    quantity: 1,
                     price: product.purchasePrice,
                 },
             });
         },
 
-        rentProduct: async (_, { productId }, { user }) => {
-            if (!user) throw new AuthenticationError('You must be logged in.');
-            const product = await prisma.product.findUnique({ where: { id: productId } });
+        rentProduct: async (parent, { productId }, context) => {
+            const user = authenticate(context);
+            const product = await prisma.product.findUnique({ where: { id: Number(productId) } });
             if (!product) throw new Error('Product not found');
 
             return prisma.productTransaction.create({
                 data: {
-                    productId,
-                    userId: user.id,
+                    productId: Number(productId),
+                    userId: user.userId,
                     transactionType: 'RENT',
-                    quantity: 1,
                     price: product.rentPrice,
                 },
             });
