@@ -94,9 +94,9 @@ const productResolvers = {
             }
             return product;
         },
-        deleteProduct: async (_, { id }, { req }) => {
-            const userId = verifyToken(req.headers.authorization);
-            const deleted = await productService.deleteProduct(id, userId);
+        deleteProduct: async (_, { id }, context) => {
+            const user = authenticate(context);
+            const deleted = await productService.deleteProduct(id, user.userId);
             if (!deleted) {
                 throw new Error('Product not found or not authorized');
             }

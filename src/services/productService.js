@@ -24,16 +24,16 @@ const createProduct = async (user, productInput) => {
 };
 
 const updateProduct = async (id, userId, productInput) => {
-    const product = await prisma.product.findUnique({ where: { id } });
+    const product = await prisma.product.findUnique({ where: { id: Number(id) } });
 
-    if (!product || product.userId !== userId) {
+    if (!product || product.creatorId !== userId) {
         return null;
     }
 
     const { title, description, purchasePrice, rentPrice, rentType, categories } = productInput;
 
     return await prisma.product.update({
-        where: { id },
+        where: { id: Number(id) },
         data: {
             title,
             description,
@@ -42,18 +42,18 @@ const updateProduct = async (id, userId, productInput) => {
             rentType,
             categories,
         },
-        include: { user: true },
+
     });
 };
 
 const deleteProduct = async (id, userId) => {
-    const product = await prisma.product.findUnique({ where: { id } });
+    const product = await prisma.product.findUnique({ where: { id: Number(id) } });
 
-    if (!product || product.userId !== userId) {
+    if (!product || product.creatorId !== userId) {
         return false;
     }
 
-    await prisma.product.delete({ where: { id } });
+    await prisma.product.delete({ where: { id: Number(id) } });
     return true;
 };
 
