@@ -1,39 +1,32 @@
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 const productService = require('../services/productService');
+const { verifyToken } = require('../utils/auth');
 
 const productResolvers = {
     Query: {
-        getProducts: async (_, __, { userId }) => {
-            if (!userId) {
-                throw new AuthenticationError('Unauthenticated');
-            }
+        getProducts: async (_, __, { req }) => {
+            const userId = verifyToken(req.headers.authorization);
             return await productService.getAllProducts(userId);
         },
     },
     Mutation: {
-        createProduct: async (_, { productInput }, { userId }) => {
-            if (!userId) {
-                throw new AuthenticationError('Unauthenticated');
-            }
+        createProduct: async (_, { productInput }, { req }) => {
+            const userId = verifyToken(req.headers.authorization);
             return await productService.createProduct(userId, productInput);
         },
-        updateProduct: async (_, { id, productInput }, { userId }) => {
-            if (!userId) {
-                throw new AuthenticationError('Unauthenticated');
-            }
+        updateProduct: async (_, { id, productInput }, { req }) => {
+            const userId = verifyToken(req.headers.authorization);
             const product = await productService.updateProduct(id, userId, productInput);
             if (!product) {
-                throw new UserInputError('Product not found or not authorized');
+                throw new Error('Product not found or not authorized');
             }
             return product;
         },
-        deleteProduct: async (_, { id }, { userId }) => {
-            if (!userId) {
-                throw new AuthenticationError('Unauthenticated');
-            }
+        deleteProduct: async (_, { id }, { req }) => {
+            const userId = verifyToken(req.headers.authorization);
             const deleted = await productService.deleteProduct(id, userId);
             if (!deleted) {
-                throw new UserInputError('Product not found or not authorized');
+                throw new Error('Product not found or not authorized');
             }
             return true;
         },

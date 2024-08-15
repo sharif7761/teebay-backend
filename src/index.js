@@ -5,20 +5,15 @@ const userTypeDefs = require('./typedefs/userTypeDefs');
 const productTypeDefs = require('./typedefs/productTypeDefs');
 const userResolvers = require('./resolvers/userResolvers');
 const productResolvers = require('./resolvers/productResolvers');
-const authenticate = require('./auth');
 
 dotenv.config();
 
 const app = express();
 
-app.use(authenticate);
-
 const server = new ApolloServer({
     typeDefs: [userTypeDefs, productTypeDefs],
     resolvers: [userResolvers, productResolvers],
-    context: ({ req }) => {
-        return { isAuth: req.isAuth, userId: req.userId };
-    },
+    context: ({ req }) => ({ req }),
 });
 
 server.start().then(() => {
