@@ -1,6 +1,6 @@
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 const productService = require('../services/productService');
-const { verifyToken } = require('../utils/auth');
+const { authenticate } = require('../utils/auth');
 
 const productResolvers = {
     Query: {
@@ -82,13 +82,13 @@ const productResolvers = {
         },
     },
     Mutation: {
-        createProduct: async (_, { productInput }, { req }) => {
-            const userId = verifyToken(req.headers.authorization);
-            return await productService.createProduct(userId, productInput);
+        createProduct: async (parent, { productInput }, context) => {
+            const user = authenticate(context);
+            return await productService.createProduct(user, productInput);
         },
-        updateProduct: async (_, { id, productInput }, { req }) => {
-            const userId = verifyToken(req.headers.authorization);
-            const product = await productService.updateProduct(id, userId, productInput);
+        updateProduct: async (parent, { id, productInput }, context) => {
+            const user = authenticate(context);
+            const product = await productService.updateProduct(id, user.userId, productInput);
             if (!product) {
                 throw new Error('Product not found or not authorized');
             }

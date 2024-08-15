@@ -8,9 +8,8 @@ const getAllProducts = async (userId) => {
     });
 };
 
-const createProduct = async (userId, productInput) => {
+const createProduct = async (user, productInput) => {
     const { title, description, purchasePrice, rentPrice, rentType, categories } = productInput;
-
     return await prisma.product.create({
         data: {
             title,
@@ -19,7 +18,7 @@ const createProduct = async (userId, productInput) => {
             rentPrice,
             rentType,
             categories,
-            userId,
+            creatorId: user.userId,
         }
     });
 };

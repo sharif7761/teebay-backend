@@ -1,22 +1,22 @@
 const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require('apollo-server-express');
 
-const verifyToken = (authHeader) => {
-    if (!authHeader) {
-        throw new AuthenticationError('No token provided');
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-        throw new AuthenticationError('Malformed token');
-    }
-
+// Function to get the user from the token
+const getUser = (token) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        return decoded.userId; // return userId
-    } catch (error) {
-        throw new AuthenticationError('Invalid or expired token');
+        if (token) {
+            return jwt.verify(token, process.env.JWT_SECRET);
+        }
+        return null;
+    } catch (err) {
+        return null;
     }
 };
+const authenticate = (context) => {
+    const token = context.req.headers.authorization || '';
+    const user = getUser(token.replace('Bearer ', ''));
+    if (!user) throw new AuthenticationError('You must be logged in');
+    return user;
+};
 
-module.exports = { verifyToken };
+module.exports = { getUser, authenticate };
