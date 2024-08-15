@@ -5,10 +5,20 @@ const productTransactionTypeDefs = gql`
     PURCHASE
     RENT
   }
+  type SoldProduct {
+    id: ID!
+    title: String!
+    description: String
+    purchasePrice: Float!
+    rentPrice: Float
+    rentType: RentType
+    categories: [Category!]!
+  }
+  
 
   type ProductTransaction {
     id: ID!
-    product: Product!
+    product: SoldProduct!
     user: User!
     transactionType: TransactionType!
     transactionDate: String!

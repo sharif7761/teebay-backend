@@ -23,7 +23,7 @@ const productTypeDefs = gql`
     rentPrice: Float
     rentType: RentType
     categories: [Category!]!
-    user: User!
+    creator: User!
   }
 
   input ProductInput {

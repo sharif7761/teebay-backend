@@ -1,4 +1,4 @@
-const { AuthenticationError, UserInputError } = require('apollo-server-express');
+const { AuthenticationError } = require('apollo-server-express');
 const productService = require('../services/productService');
 const { authenticate } = require('../utils/auth');
 const { PrismaClient } = require('@prisma/client');
@@ -6,12 +6,6 @@ const prisma = new PrismaClient();
 
 const productResolvers = {
     Query: {
-        // getProducts: async (_, __, { req }) => {
-        //     const userId = verifyToken(req.headers.authorization);
-        //     return await productService.getAllProducts(userId);
-        // },
-
-        //new
         userProducts: async (_, __, context) => {
             const user = authenticate(context);
             return prisma.product.findMany({
@@ -34,6 +28,7 @@ const productResolvers = {
                 },
                 include: {
                     product: true,
+                    user: true,
                 },
             });
         },
@@ -64,6 +59,7 @@ const productResolvers = {
                 },
                 include: {
                     product: true,
+                    user: true,
                 },
             });
         },
@@ -109,7 +105,10 @@ const productResolvers = {
         buyProduct: async (parent, { productId }, context) => {
             const user = authenticate(context);
             const product = await prisma.product.findUnique({ where: { id: Number(productId) } });
-            if (!product) throw new Error('Product not found');
+
+            if (!product || product.creatorId === user.userId) {
+                throw new Error('Product not found or not authorized');
+            }
 
             return prisma.productTransaction.create({
                 data: {
@@ -118,13 +117,19 @@ const productResolvers = {
                     transactionType: 'PURCHASE',
                     price: product.purchasePrice,
                 },
+                include: {
+                    product: true,
+                    user: true
+                }
             });
         },
 
         rentProduct: async (parent, { productId }, context) => {
             const user = authenticate(context);
             const product = await prisma.product.findUnique({ where: { id: Number(productId) } });
-            if (!product) throw new Error('Product not found');
+            if (!product || product.creatorId === user.userId) {
+                throw new Error('Product not found or not authorized');
+            }
 
             return prisma.productTransaction.create({
                 data: {

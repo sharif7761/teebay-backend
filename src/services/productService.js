@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 const getAllProducts = async (userId) => {
     return await prisma.product.findMany({
         where: { userId },
-        include: { user: true },
+        include: { creator: true },
     });
 };
 
@@ -19,6 +19,9 @@ const createProduct = async (user, productInput) => {
             rentType,
             categories,
             creatorId: user.userId,
+        },
+        include: {
+            creator: true,
         }
     });
 };
@@ -42,7 +45,9 @@ const updateProduct = async (id, userId, productInput) => {
             rentType,
             categories,
         },
-
+        include: {
+            creator: true,
+        }
     });
 };
 

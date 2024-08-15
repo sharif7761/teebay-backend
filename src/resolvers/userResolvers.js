@@ -17,7 +17,7 @@ const userResolvers = {
                 throw new AuthenticationError('Password is incorrect');
             }
             const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
-                expiresIn: '1h',
+                expiresIn: '24h',
             });
             return { userId: user.id, token: token };
         },
