@@ -2,7 +2,9 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const dotenv = require('dotenv');
 const userTypeDefs = require('./typedefs/userTypeDefs');
+const productTypeDefs = require('./typedefs/productTypeDefs');
 const userResolvers = require('./resolvers/userResolvers');
+const productResolvers = require('./resolvers/productResolvers');
 const authenticate = require('./auth');
 
 dotenv.config();
@@ -12,8 +14,8 @@ const app = express();
 app.use(authenticate);
 
 const server = new ApolloServer({
-    typeDefs: [userTypeDefs],
-    resolvers: [userResolvers],
+    typeDefs: [userTypeDefs, productTypeDefs],
+    resolvers: [userResolvers, productResolvers],
     context: ({ req }) => {
         return { isAuth: req.isAuth, userId: req.userId };
     },

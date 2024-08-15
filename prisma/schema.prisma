@@ -14,8 +14,35 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   password String
   name     String?
+  products Product[]
+}
+
+model Product {
+  id            Int        @id @default(autoincrement())
+  title         String
+  description   String?
+  purchasePrice Float
+  rentPrice     Float?
+  rentType      RentType?
+  categories    Category[]
+  userId        Int
+  user          User       @relation(fields: [userId], references: [id])
+}
+
+enum RentType {
+  PER_DAY
+  PER_HOUR
+}
+
+enum Category {
+  ELECTRONICS
+  FURNITURE
+  HOME_APPLIANCES
+  SPORTING_GOODS
+  OUTDOOR
+  TOYS
 }
