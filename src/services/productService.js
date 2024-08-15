@@ -18,10 +18,9 @@ const createProduct = async (userId, productInput) => {
             purchasePrice,
             rentPrice,
             rentType,
-            userId,
             categories,
-        },
-        include: { user: true },
+            userId,
+        }
     });
 };
 

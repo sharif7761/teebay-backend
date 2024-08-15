@@ -28,15 +28,17 @@ const productTypeDefs = gql`
 
   input ProductInput {
     title: String!
-    description: String
-    purchasePrice: Float!
-    rentPrice: Float
-    rentType: RentType
     categories: [Category!]!
+    description: String!
+    purchasePrice: Float!
+    rentPrice: Float!
+    rentType: RentType!
+    status: String
   }
 
   type Query {
-    getProducts: [Product!]!
+    userProducts: [Product!]!
+    allProducts: [Product!]!
   }
 
   type Mutation {

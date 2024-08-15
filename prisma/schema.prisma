@@ -14,28 +14,57 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  password String
-  name     String?
-  products Product[]
+  id           Int                  @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  address      String?
+  email        String               @unique
+  phone        String?
+  password     String
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  products     Product[]            @relation("CreatedBy")
+  transactions ProductTransaction[]
 }
 
 model Product {
-  id            Int        @id @default(autoincrement())
+  id            Int                  @id @default(autoincrement())
   title         String
-  description   String?
-  purchasePrice Float
-  rentPrice     Float?
-  rentType      RentType?
   categories    Category[]
-  userId        Int
-  user          User       @relation(fields: [userId], references: [id])
+  description   String
+  purchasePrice Float
+  rentPrice     Float
+  rentType      RentType
+  status        String?
+  views         Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  creator       User?                @relation("CreatedBy", fields: [creatorId], references: [id])
+  creatorId     Int?
+  transactions  ProductTransaction[]
+}
+
+model ProductTransaction {
+  id              Int             @id @default(autoincrement())
+  product         Product         @relation(fields: [productId], references: [id])
+  productId       Int
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int
+  transactionType TransactionType
+  transactionDate DateTime        @default(now())
+  price           Float
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 enum RentType {
-  PER_DAY
   PER_HOUR
+  PER_DAY
+}
+
+enum TransactionType {
+  PURCHASE
+  RENT
 }
 
 enum Category {

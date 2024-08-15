@@ -26,7 +26,10 @@ const userResolvers = {
             const user = await userService.createUser({
                 email: registerInput.email,
                 password: hashedPassword,
-                name: registerInput.name,
+                firstName: registerInput.firstName,
+                lastName: registerInput.lastName,
+                address: registerInput.address,
+                phone: registerInput.phone,
             });
             return user;
         },
