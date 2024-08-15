@@ -18,7 +18,7 @@ const userTypeDefs = gql`
     name: String
   }
 
-  type Query {
+  type Mutation {
     login(email: String!, password: String!): AuthData!
   }
 

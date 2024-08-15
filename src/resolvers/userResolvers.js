@@ -5,6 +5,8 @@ const userService = require('../services/userService');
 
 const userResolvers = {
     Query: {
+    },
+    Mutation: {
         login: async (_, { email, password }) => {
             const user = await userService.findUserByEmail(email);
             if (!user) {
@@ -19,8 +21,6 @@ const userResolvers = {
             });
             return { userId: user.id, token: token };
         },
-    },
-    Mutation: {
         register: async (_, { registerInput }) => {
             const hashedPassword = await bcrypt.hash(registerInput.password, 12);
             const user = await userService.createUser({
