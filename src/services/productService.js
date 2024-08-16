@@ -62,9 +62,28 @@ const deleteProduct = async (id, userId) => {
     return true;
 };
 
+const getProductDetails = async (user, productId) => {
+    try {
+        const product = await prisma.product.findUnique({
+            where: { id: parseInt(productId) },
+            include: {
+                creator: true,
+            },
+        });
+        if (!product || product.creatorId !== userId) {
+            return false;
+        }
+
+        return product;
+    } catch (error) {
+        throw new Error('Product not found');
+    }
+};
+
 module.exports = {
     getAllProducts,
     createProduct,
     updateProduct,
     deleteProduct,
+    getProductDetails
 };

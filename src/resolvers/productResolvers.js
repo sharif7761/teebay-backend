@@ -80,6 +80,11 @@ const productResolvers = {
                 },
             });
         },
+        productDetails: async (parent, args, context) => {
+            const { id } = args;
+            const user = authenticate(context);
+            return await productService.getProductDetails(user.userId, id);
+        },
     },
     Mutation: {
         createProduct: async (parent, { productInput }, context) => {
