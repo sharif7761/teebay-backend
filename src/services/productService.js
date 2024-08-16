@@ -67,6 +67,7 @@ const getProductDetails = async (user, productId) => {
         const product = await prisma.product.findUnique({
             where: { id: parseInt(productId) },
             include: {
+                transactions: true,
                 creator: true,
             },
         });

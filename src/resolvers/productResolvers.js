@@ -10,6 +10,10 @@ const productResolvers = {
             const user = authenticate(context);
             return prisma.product.findMany({
                 where: { creatorId: user.userId },
+                include: {
+                transactions: true,
+                creator: true,
+            },
             });
         },
 
@@ -52,6 +56,7 @@ const productResolvers = {
                 },
                 include: {
                     transactions: true,
+                    creator: true,
                 },
             });
         },
@@ -83,6 +88,7 @@ const productResolvers = {
                 },
                 include: {
                     transactions: true,
+                    creator: true,
                 },
             });
         },

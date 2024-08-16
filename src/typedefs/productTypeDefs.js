@@ -14,6 +14,11 @@ const productTypeDefs = gql`
     OUTDOOR
     TOYS
   }
+  
+  type ProductTransactions {
+  id: ID!
+  transactionType: String! 
+}
 
   type Product {
     id: ID!
@@ -25,6 +30,7 @@ const productTypeDefs = gql`
     rentType: RentType
     categories: [Category!]!
     creator: User!
+    transactions: [ProductTransactions!]!
   }
 
   input ProductInput {
@@ -41,6 +47,8 @@ const productTypeDefs = gql`
     userProducts: [Product!]!
     allProducts: [Product!]!
     productDetails(id: ID!): Product!
+    soldProducts: [Product!]!
+    lentProducts: [Product!]!
   }
 
   type Mutation {

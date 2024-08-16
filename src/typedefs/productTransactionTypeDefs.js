@@ -13,6 +13,7 @@ const productTransactionTypeDefs = gql`
     rentPrice: Float
     rentType: RentType
     categories: [Category!]!
+    views: Float
   }
   
 
@@ -27,9 +28,7 @@ const productTransactionTypeDefs = gql`
 
   type Query {
     boughtProducts: [ProductTransaction!]!
-    soldProducts: [ProductTransaction!]!
     rentProducts: [ProductTransaction!]!
-    lentProducts: [ProductTransaction!]!
   }
 
   type Mutation {
