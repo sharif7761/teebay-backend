@@ -157,6 +157,18 @@ const productResolvers = {
                 },
             });
         },
+
+        incrementProductViews: async (_, { productId }, { prisma }) => {
+            const product = await prisma.product.update({
+                where: { id: Number(productId) },
+                data: {
+                    views: {
+                        increment: 1,
+                    },
+                },
+            });
+            return product;
+        },
     },
 };
 

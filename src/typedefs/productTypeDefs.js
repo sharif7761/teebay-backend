@@ -55,6 +55,7 @@ const productTypeDefs = gql`
     createProduct(productInput: ProductInput): Product!
     updateProduct(id: ID!, productInput: ProductInput): Product!
     deleteProduct(id: ID!): Boolean!
+    incrementProductViews(productId: ID!): Product!
   }
 `;
 
