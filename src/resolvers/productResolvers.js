@@ -16,7 +16,13 @@ const productResolvers = {
         allProducts: async (_, __, context) => {
             const user = authenticate(context);
             if (!user) throw new AuthenticationError('You must be logged in.');
-            return prisma.product.findMany();
+            return prisma.product.findMany({
+                where: {
+                    NOT: {
+                        creatorId: user.userId,
+                    },
+                },
+            });
         },
 
         boughtProducts: async (_, __, context) => {

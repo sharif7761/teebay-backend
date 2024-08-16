@@ -70,9 +70,9 @@ const getProductDetails = async (user, productId) => {
                 creator: true,
             },
         });
-        if (!product || product.creatorId !== userId) {
-            return false;
-        }
+        // if (!product || product.creatorId !== userId) {
+        //     return false;
+        // }
 
         return product;
     } catch (error) {

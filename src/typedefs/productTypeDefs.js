@@ -21,6 +21,7 @@ const productTypeDefs = gql`
     description: String
     purchasePrice: Float!
     rentPrice: Float
+    views: Float
     rentType: RentType
     categories: [Category!]!
     creator: User!
